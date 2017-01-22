@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const errors = require('../errors');
 const crypto = require('crypto');
-const Types = mongoose.Types;
+const Types = mongoose.Schema.Types;
 
 const schema = new mongoose.Schema({
     _id: {

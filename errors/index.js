@@ -50,6 +50,5 @@ module.exports = {
     NotAcceptable,
     NotFoundError,
     ForbiddenError,
-    QuotasError,
     ValidationError
 };
