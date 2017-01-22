@@ -1,29 +1,45 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const config   = require('config');
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session);;
+const sessionStore = new MongoStore({ mongooseConnection: connect, stringify: false });
+const passport = require('./auth');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+const routes = require('./routes/index');
+const app = express();
 
-var app = express();
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
+app.use(session({
+  secret: config.get('session').secret,
+  cookie: config.get('session').cookie,
+  key: config.get('session').key,
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/', routes);
-app.use('/users', users);
-
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+
+
+const port = config.get('server').port;
+const host = config.get('server').host;
+
+app.listen(port, host, function () {
+  mongoose.connect(config.get('database').uri, config.options);
+
+  logger.info(`[Server]: Start server on port: ${port}`);
+  logger.info(`used db: ${config.get('database').uri}`);
 });
 module.exports = app;
