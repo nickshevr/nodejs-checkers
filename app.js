@@ -29,6 +29,13 @@ app.use(passport.session());
 
 app.use('/api', userRouter);
 
+/**
+ * Обработка ошибок: 404
+ * */
+app.use(function (req, res) {
+  res.status(404).json({ error: 404, message: 'route not found' });
+});
+
 app.use(function(err, req, res, next) {
   const errStatus = err.status ? err.status : err.statusCode;
 
