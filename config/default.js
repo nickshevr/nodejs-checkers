@@ -13,6 +13,7 @@ module.exports = {
             rolling: true
         }
     },
+
     "database": {
         "uri" : "mongodb://localhost/checkers",
         "options": {
@@ -23,6 +24,17 @@ module.exports = {
                     "keepAlive": 1
                 }
             }
+        }
+    },
+
+    bodyParser: {
+        json: {
+            limit: '3mb'
+        },
+        urlencoded: {
+            extended: false,
+            limit: '10mb',
+            parameterLimit: 10000
         }
     }
 };

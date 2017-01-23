@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const config   = require('config');
@@ -11,10 +10,12 @@ const passport = require('./auth');
 const connect = require('./db/connect');
 const sessionStore = new MongoStore({ mongooseConnection: connect, stringify: false });
 
-const routes = require('./routes/index');
+const userRouter = require('./routes/userRoutes');
 const app = express();
 
 app.use(logger('dev'));
+app.use(bodyParser.json(config.get('bodyParser.json')));
+app.use(bodyParser.urlencoded(config.get('bodyParser.urlencoded')));
 app.use(session({
   secret: config.get('session').secret,
   cookie: config.get('session').cookie,
@@ -26,12 +27,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-
-app.use('/', routes);
-// catch 404 and forward to error handler
+app.use('/api', userRouter);
 
 app.use(function(err, req, res, next) {
   const errStatus = err.status ? err.status : err.statusCode;
