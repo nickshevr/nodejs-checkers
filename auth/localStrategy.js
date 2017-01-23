@@ -21,6 +21,10 @@ passport.use(new LocalStrategy({
             return done(null, false, {errorType: 1});
         }
 
+        if (!user.checkPassword(password)) {
+            return done(null, false, { errorType: 2 });
+        }
+
         done(null, user);
     });
 }));

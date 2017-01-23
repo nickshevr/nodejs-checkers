@@ -17,11 +17,24 @@ const schema = new mongoose.Schema({
     },
     hashedPassword: {
         type: Types.String,
-        required: true,
-        private: true
+        required: true
+    },
+    salt: {
+        type: Types.String,
+        required: true
     },
     currentGame: Types.ObjectId
 });
+
+schema.virtual('password')
+    .set(function (password) {
+        this._plainPassword = password;
+        this.salt = `${Math.random()}`;
+        this.hashedPassword = this.encryptPassword(password);
+    })
+    .get(function () {
+        return this._plainPassword;
+    });
 
 schema.methods.encryptPassword = function (password) {
     if (!password) throw new errors.NotAcceptable('$password must be specified');
