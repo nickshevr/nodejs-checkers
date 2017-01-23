@@ -4,14 +4,25 @@ const config = require('config');
 const User = require('../../models/user').User;
 
 exports.createUser = function (req, res, next) {
-    User.create({
-        name: req.body.name,
-        password: req.body.password
-    })
-    .then(() => {
-        return next();
-    })
-    .catch(next);
+    req.body.login = req.body.name;
+
+    User.find({ name: req.body.name })
+        .limit(1)
+        .lean()
+        .then(alreadyInSystem => {
+            if (alreadyInSystem[0]) {
+                return next('err');
+            }
+
+            User.create({
+                name: req.body.name,
+                password: req.body.password
+            });
+        })
+        .then(() => {
+            return next();
+        })
+        .catch(next);
 };
 
 exports.responseUser = function (req, res, next) {

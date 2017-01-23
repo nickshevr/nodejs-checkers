@@ -14,7 +14,7 @@ passport.use(new LocalStrategy({
     usernameField: 'login',
     passwordField: 'password'
 }, function(login, password, done) {
-    User.find({ username: login }, function(err, user){
+    User.find({ name: login }, function(err, user){
         if (err) return done(err);
 
         if (!user) {
