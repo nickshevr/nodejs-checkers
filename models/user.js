@@ -12,8 +12,7 @@ const schema = new mongoose.Schema({
     username: {
         type: Types.String,
         unique: true,
-        required: true,
-        default: () => Math.random().toString(36).substr(2, 9)
+        required: true
     },
     hashedPassword: {
         type: Types.String,
