@@ -17,11 +17,11 @@ passport.use(new LocalStrategy({
     User.find({ name: login }, function(err, user){
         if (err) return done(err);
 
-        if (!user) {
+        if (!user[0]) {
             return done(null, false, {errorType: 1});
         }
 
-        if (!user.checkPassword(password)) {
+        if (!user[0].checkPassword(password)) {
             return done(null, false, { errorType: 2 });
         }
 

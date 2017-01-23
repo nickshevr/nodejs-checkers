@@ -6,7 +6,7 @@ const Types = mongoose.Schema.Types;
 const schema = new mongoose.Schema({
     _id: {
         type: Types.ObjectId,
-        default: Types.ObjectId,
+        default: mongoose.Types.ObjectId,
         unique: true
     },
     username: {

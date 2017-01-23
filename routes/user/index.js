@@ -14,12 +14,12 @@ exports.createUser = function (req, res, next) {
                 return next('err');
             }
 
-            User.create({
+            return User.create({
                 name: req.body.name,
                 password: req.body.password
             });
         })
-        .then(() => {
+        .then((user) => {
             return next();
         })
         .catch(next);
