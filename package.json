@@ -17,5 +17,19 @@
     "connect-mongo": "^1.1.0",
     "express-session": "^1.12.1",
     "lodash": "^4.1.0"
+  },
+  "devDependencies": {
+    "babel-plugin-module-alias": "^1.2.0",
+    "babel-plugin-syntax-async-functions": "^6.5.0",
+    "babel-plugin-transform-async-to-generator": "^6.7.4",
+    "babel-plugin-transform-flow-strip-types": "^6.7.0",
+    "babel-preset-es2015-node4": "^2.1.0",
+    "babel-register": "^6.7.2",
+    "mocha": "^2.3.3",
+    "should": "^8.0.2",
+    "should-sinon": "0.0.5",
+    "sinon": "^1.17.3",
+    "superagent-defaults": "^0.1.14",
+    "supertest": "^1.1.0"
   }
 }
