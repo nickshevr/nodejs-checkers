@@ -33,8 +33,7 @@ exports.createUser = function (req, res, next) {
 exports.responseUser = function (req, res, next) {
     User.findOne({ _id: req.user._id })
     .then(user => {
-        console.log(user);
-        res.json(user);
+        res.json(user.toJSON());
     })
     .catch(next);
 };

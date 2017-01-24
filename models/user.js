@@ -45,6 +45,15 @@ schema.methods.checkPassword = function (password) {
     return this.encryptPassword(password) === this.hashedPassword;
 };
 
+schema.methods.toJSON = function () {
+    const res = this.toObject();
+
+    delete res.hashedPassword;
+    delete res.salt;
+
+    return res;
+};
+
 const User = mongoose.model('User', schema);
 
 exports.User = User;

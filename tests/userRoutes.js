@@ -5,6 +5,7 @@ const defaults = require('superagent-defaults');
 const agent = defaults(request(app));
 const DB_PATH = './tests/mock/base';
 const User = require('../models/user').User;
+const should = require('should');
 
 describe('User routes', () => {
 
@@ -23,14 +24,16 @@ describe('User routes', () => {
                 });
         });
 
-        it('Should return good parameters', async () => {
-            console.log(response.body);
+        it('Should return user info', async () => {
+            response.body.should.have.properties(['_id', 'username']);
+            response.body.should.not.have.properties(['hashedPassword', 'salt']);
         });
 
         it('Should create userObject intoDB', async () => {
             const user = await User.findOne({ username: 'Tester1'});
 
-            console.log(user);
+            should.exist(user);
+            user.should.have.properties(['_id', 'username', 'hashedPassword', 'salt']);
         });
     });
 });
