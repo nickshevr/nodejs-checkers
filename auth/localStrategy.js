@@ -12,7 +12,7 @@ passport.use(new LocalStrategy({
     usernameField: 'login',
     passwordField: 'password'
 }, function(login, password, done) {
-    User.find({ username: login }, { limit: 1 }, function(err, user){
+    User.find({ username: login }, function(err, user){
         if (err) return done(err);
 
         if (!user[0]) {

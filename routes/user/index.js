@@ -16,7 +16,6 @@ exports.createUser = function (req, res, next) {
             }
 
             return User.create({
-<<<<<<< HEAD
                 username: req.body.username,
                 password: req.body.password
             });
@@ -26,13 +25,6 @@ exports.createUser = function (req, res, next) {
                 return next(new errors.ForbiddenError(`User wasn't created`));
             }
 
-=======
-                name: req.body.name,
-                password: req.body.password
-            });
-        })
-        .then((user) => {
->>>>>>> bd7c9b1075b5be876c2f39016ca0b1f41867d771
             return next();
         })
         .catch(next);
