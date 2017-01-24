@@ -45,6 +45,16 @@ app.use(function(err, req, res, next) {
     message: err.message
   };
 
+  if(err.name === 'ValidationError' && err.errors) {
+    const fields = {};
+
+    for(let field in err.errors) {
+      fields[field] = err.errors[field].message;
+    }
+
+    response.fields = fields;
+  }
+
   res.status(err.status || err.statusCode || 500).json(response);
   next();
 });

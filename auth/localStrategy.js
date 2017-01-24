@@ -6,26 +6,24 @@ var User = require('../models/user').User;
 
 /**
  * Модуль реализует локальную стратегию регистрации / авторизации (login & password)
- *
- * В качестве login может использоваться username or getPassword
  */
 
 passport.use(new LocalStrategy({
     usernameField: 'login',
     passwordField: 'password'
 }, function(login, password, done) {
-    User.find({ name: login }, function(err, user){
+    User.find({ username: login }, { limit: 1 }, function(err, user){
         if (err) return done(err);
 
-        if (!user) {
+        if (!user[0]) {
             return done(null, false, {errorType: 1});
         }
 
-        if (!user.checkPassword(password)) {
+        if (!user[0].checkPassword(password)) {
             return done(null, false, { errorType: 2 });
         }
 
-        done(null, user);
+        done(null, user[0]);
     });
 }));
 
