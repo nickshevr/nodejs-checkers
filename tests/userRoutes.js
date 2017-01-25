@@ -35,5 +35,41 @@ describe('User routes', () => {
             should.exist(user);
             user.should.have.properties(['_id', 'username', 'hashedPassword', 'salt']);
         });
+
+        it('Shouldnt create user with the same username', async () => {
+            const res = await agent.post('/api/signup')
+                .send({
+                    username: 'Tester1',
+                    password: '123456'
+                });
+
+            res.body.should.be.deepEqual({
+                statusCode: 406,
+                name: 'NotAcceptable',
+                message: 'Tester1 has been already taken'
+            });
+        });
+    });
+
+    describe('#POST /api/login', async () => {
+        before(async () => {
+            await setupDB(DB_PATH);
+
+            await agent.post('/api/signup')
+                .send({
+                    username: 'Tester1',
+                    password: '123456'
+                });
+        });
+
+        it('Login', async () => {
+            const res = await agent.post('/api/login')
+                .send({
+                    login: 'Tester1',
+                    password: '123456'
+                });
+
+            console.log(res.body);
+        });
     });
 });

@@ -9,4 +9,9 @@ router.post('/signup',
     userRoutes.responseUser
 );
 
+router.post('/login',
+    userRoutes.login,
+    userRoutes.responseUser
+);
+
 module.exports = router;

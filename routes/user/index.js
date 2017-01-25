@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const config = require('config');
 const User = require('../../models/user').User;
 const errors = require('../../errors');
+const passport = require('../../auth');
 
 exports.createUser = function (req, res, next) {
     req.body.login = req.body.username;
@@ -28,6 +29,31 @@ exports.createUser = function (req, res, next) {
             return next();
         })
         .catch(next);
+};
+
+exports.login = function (req, res, next) {
+    passport.authenticate('local', function (err, user, options) {
+        const _options = options || {};
+
+        if (err) return next(err);
+
+        if (!user) {
+            if (_options.errorType === 1) {
+                return next(new errors.AccessDenied('Wrong username (login)'));
+            }
+
+            if (_options.errorType === 2) {
+                return next(new errors.AccessDenied('Wrong password'));
+            }
+
+            return next(new errors.AccessDenied('You are blocked'));
+        }
+
+        req.logIn(user, function (err) {
+            if (err) return next(err);
+            next();
+        });
+    })(req, res, next);
 };
 
 exports.responseUser = function (req, res, next) {
