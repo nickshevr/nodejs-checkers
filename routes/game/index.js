@@ -50,3 +50,10 @@ exports.joinGame = function (req, res, next) {
     })
     .catch(next);
 };
+
+exports.movePiece = function (req, res, next) {
+    const gameId = req.params.gameId;
+    const newCoords = req.body.newCoords;
+
+
+};
