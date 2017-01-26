@@ -98,7 +98,7 @@ schema.statics.getFieldValue = function getFieldValue(gameId, x, y) {
     return this.constructor.find({
         gameId,
         "position.x": x,
-        "position.y": y,
+        "position.y": y
     })
     .limit(1)
     .lean()

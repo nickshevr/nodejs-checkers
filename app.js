@@ -9,6 +9,7 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('./auth');
 const connect = require('./db/connect');
 const sessionStore = new MongoStore({ mongooseConnection: connect, stringify: false });
+const isAuth = require('./middleware/isAuth.js');
 
 const userRouter = require('./routes/userRoutes');
 const app = express();
@@ -27,6 +28,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(isAuth);
 app.use('/api', userRouter);
 
 /**

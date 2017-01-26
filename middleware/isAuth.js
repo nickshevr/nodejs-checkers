@@ -8,7 +8,7 @@ const nonAuthRoutes = [
 
 module.exports = function(req, res, next) {
     const url = req.url.split('\?')[0];
-    const uri = url.split('/')[1];
+    const uri = url.split('/')[2];
     if(req.user) {
         return next();
     }
@@ -17,5 +17,5 @@ module.exports = function(req, res, next) {
         return next();
     }
 
-    return next(new errors.NotAcceptable('incorrect token'));
+    return next(new errors.NotAcceptable('You are auth'));
 };
