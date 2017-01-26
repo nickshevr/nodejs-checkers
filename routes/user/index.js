@@ -56,6 +56,17 @@ exports.login = function (req, res, next) {
     })(req, res, next);
 };
 
+exports.logout = function(req, res, next) {
+    req.session.destroy((err) => {
+        if (err) {
+            next(err);
+        } else {
+            res.clearCookie(config.get('session.key'));
+            res.json({ logout: 'success' });
+        }
+    });
+};
+
 exports.responseUser = function (req, res, next) {
     User.findOne({ _id: req.user._id })
     .then(user => {

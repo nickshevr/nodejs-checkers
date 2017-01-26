@@ -62,14 +62,55 @@ describe('User routes', () => {
                 });
         });
 
-        it('Login', async () => {
+        it('Login with valid data', async () => {
             const res = await agent.post('/api/login')
                 .send({
                     login: 'Tester1',
                     password: '123456'
                 });
 
-            console.log(res.body);
+            res.body.should.have.properties(['_id', 'username']);
+        });
+
+        it('Login with invalid data ${password}', async () => {
+            const res = await agent.post('/api/login')
+                .send({
+                    login: 'Tester1',
+                    password: '123123'
+                });
+
+            res.body.should.be.deepEqual({
+                statusCode: 403,
+                name: 'AccessDenied',
+                message: 'Wrong password'
+            });
+        });
+
+
+        it('Login with invalid data ${login}', async () => {
+            const res = await agent.post('/api/login')
+                .send({
+                    login: 'WrongLogin',
+                    password: '123123'
+                });
+
+            res.body.should.be.deepEqual({
+                statusCode: 403,
+                name: 'AccessDenied',
+                message: 'Wrong username (login)'
+            });
+        });
+    });
+
+    describe('#POST /api/logout', async () => {
+        before(async () => {
+            await setupDB(DB_PATH);
+
+            await agent.post('/api/signup')
+                .send({
+                    username: 'Tester1',
+                    password: '123456'
+                });
         });
     });
 });

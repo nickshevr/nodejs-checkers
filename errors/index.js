@@ -45,10 +45,20 @@ class ValidationError extends Error {
     }
 }
 
+class AccessDenied extends Error {
+    constructor(message, status) {
+        super(message);
+        this.name = 'AccessDenied';
+        this.status = status || 403;
+        this.description = 'You don\'t have permission.';
+    }
+}
+
 module.exports = {
     UnrecoverableError,
     NotAcceptable,
     NotFoundError,
     ForbiddenError,
-    ValidationError
+    ValidationError,
+    AccessDenied
 };

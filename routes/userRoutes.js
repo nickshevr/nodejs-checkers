@@ -14,4 +14,8 @@ router.post('/login',
     userRoutes.responseUser
 );
 
+router.get('/logout',
+    userRoutes.logout
+);
+
 module.exports = router;
