@@ -6,6 +6,14 @@ const Piece = require('../../models/piece').Piece;
 const Token = require('../../models/token').Token;
 const errors = require('../../errors');
 
+exports.getGames = function (req, res, next) {
+    Game.getGamesForUser(req.user)
+    .then(gamesArray => {
+        res.json(gamesArray);
+    })
+    .catch(next);
+};
+
 exports.createGame = function (req, res, next) {
     const response = {};
 
@@ -21,6 +29,7 @@ exports.createGame = function (req, res, next) {
     })
     .catch(next);
 };
+
 // @ToDo удалять токен после аппрува
 exports.joinGame = function (req, res, next) {
     const gameId = req.params.gameId;
@@ -38,12 +47,12 @@ exports.joinGame = function (req, res, next) {
             return next(new errors.NotAcceptable('Wrong Token'));
         }
 
-        return Game.findById(gameId);
+        return Promise.all([Game.findById(gameId), approved[0].remove()]);
     })
     .then(gameToUpdate => {
-        gameToUpdate.userList.push(req.user._id);
+        gameToUpdate[0].userList.push(req.user._id);
 
-        return gameToUpdate.save();
+        return gameToUpdate[0].save();
     })
     .then(() => {
         res.JSON(`Added to ${gameId}`)
