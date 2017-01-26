@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Types = mongoose.Types;
+const errors = require('../errors');
 
 const schema = new mongoose.Schema({
     _id: {
@@ -34,10 +35,27 @@ schema.statics.EMPTY_FIELD = 'EMPTY_FIELD';
 schema.statics.BLACK_PIECE = 'BLACK_PIECE';
 schema.statics.WHITE_PIECE = 'WHITE_PIECE';
 
+// 0 - black, 1 - white
+function firstValidateMove (color, oldX, oldY, newX, newY) {
+    if (color) {
+        return (Math.abs(oldX - newX) === 1 && newY - oldY === 1) || (Math.abs(oldY - newY) === 1 && newX - oldX === 1)
+    }
+
+    return (Math.abs(oldX - newX) === 1 && oldY - newY === 1) || (Math.abs(oldY - newY) === 1 && oldX - newX === 1)
+}
+
+function secondValidateMove  (color, oldX, oldY, newX, newY) {
+    if (color) {
+        return (Math.abs(oldX - newX) === 2 && newY - oldY === 2) || (Math.abs(oldY - newY) === 2 && newX - oldX === 2)
+    }
+
+    return (Math.abs(oldX - newX) === 2 && oldY - newY === 2) || (Math.abs(oldY - newY) === 2 && oldX - newX === 2)
+}
+
 schema.statics.basePieceInit = function basePieceInit(gameId) {
     const promises = [];
 
-    // create all of the black pieces
+    // create all of the white pieces
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 7; j++) {
             if ((i + j) % 2 == 1) {
@@ -47,13 +65,13 @@ schema.statics.basePieceInit = function basePieceInit(gameId) {
                         x: j,
                         y: i
                     },
-                    color: 0
+                    color: 1
                 }))
             }
         }
     }
 
-    // create all of the white pieces
+    // create all of the black pieces
     for (let i = 7; i > 4; i--) {
         for (let j = 0; j < 7; j++) {
             if ((i + j) % 2 == 1) {
@@ -63,7 +81,7 @@ schema.statics.basePieceInit = function basePieceInit(gameId) {
                         x: j,
                         y: i
                     },
-                    color: 1
+                    color: 0
                 }))
             }
         }
@@ -86,11 +104,39 @@ schema.statics.getFieldValue = function getFieldValue(gameId, x, y) {
         }
 
         return positionValue[0].color === 0 ? this.constructor.statics.BLACK_PIECE : this.constructor.statics.WHITE_PIECE;
-    })
+    });
 };
 
-schema.statics.modePiece = function movePiece (pieceId, x, y) {
+schema.statics.movePiece = function movePiece (gameId, pieceId, newX, newY) {
+    let pieceDB = null;
+    let gameDB = null;
 
+    return this.model('piece').getFieldValue(gameId, newX, newY)
+        .then(newPositionValue => {
+            if (newPositionValue !== this.model('piece').EMPTY_FIELD) {
+                throw new errors.ValidationError('Position is not empty')
+            }
+
+            return this.model('piece').findById(pieceId);
+        })
+        .then(pieceData => {
+            pieceDB = pieceData;
+
+            return this.model('piece').getFieldValue(gameId, Math.abs(newX - pieceDB.position.x)/2,  Math.abs(newY - pieceDB.position.y)/2, newY);
+        })
+        .then(secondLinePiece => {
+            if (firstValidateMove(pieceDB.color, pieceDB.position.x, pieceDB.position.y, newX, newY)) {
+                pieceDB.position.x = newX;
+                pieceDB.position.y = newY;
+            }
+
+            if (secondValidateMove(pieceDB.color, pieceDB.position.x, pieceDB.position.y, newX, newY) && secondLinePiece.color !== pieceDB.color) {
+                pieceDB.position.x = newX;
+                pieceDB.position.y = newY;
+            }
+
+            return pieceDB.save();
+        });
 };
 
 const Piece = mongoose.model('Piece', schema);
