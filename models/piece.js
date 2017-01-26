@@ -28,6 +28,10 @@ const schema = new mongoose.Schema({
     gameId: {
         type: Types.ObjectId,
         required: true
+    },
+    isEaten: {
+        type: Types.Boolean,
+        default: false
     }
 });
 
@@ -99,7 +103,7 @@ schema.statics.getFieldValue = function getFieldValue(gameId, x, y) {
     .limit(1)
     .lean()
     .then(positionValue => {
-        if (!positionValue[0]) {
+        if (!positionValue[0] || positionValue.isEaten) {
             return this.constructor.statics.EMPTY_FIELD;
         }
 
@@ -114,13 +118,17 @@ schema.statics.movePiece = function movePiece (gameId, pieceId, newX, newY) {
     return this.model('piece').getFieldValue(gameId, newX, newY)
         .then(newPositionValue => {
             if (newPositionValue !== this.model('piece').EMPTY_FIELD) {
-                throw new errors.ValidationError('Position is not empty')
+                throw new errors.ValidationError('Position is not empty');
             }
 
             return this.model('piece').findById(pieceId);
         })
         .then(pieceData => {
             pieceDB = pieceData;
+
+            if (pieceDB.isEaten){
+                throw new errors.ValidationError('Piece has been eaten');
+            }
 
             return this.model('piece').getFieldValue(gameId, Math.abs(newX - pieceDB.position.x)/2,  Math.abs(newY - pieceDB.position.y)/2, newY);
         })
