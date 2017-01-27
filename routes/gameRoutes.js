@@ -14,4 +14,8 @@ router.post('/:username/game/:gameId/join',
     gameRoutes.joinGame
 );
 
+router.get('/:username/game/:gameId/pieces',
+    gameRoutes.getPieceInfo
+);
+
 module.exports = router;

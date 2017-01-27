@@ -60,6 +60,17 @@ exports.joinGame = function (req, res, next) {
     .catch(next);
 };
 
+exports.getPieceInfo = function (req, res, next) {
+    Piece.find({
+        gameId: req.params.gameId
+    })
+    .lean()
+    .then(pieces => {
+        res.json(pieces);
+    })
+    .catch(next);
+}
+
 exports.movePiece = function (req, res, next) {
     const gameId = req.params.gameId;
     const newCoords = req.body.newCoords;
