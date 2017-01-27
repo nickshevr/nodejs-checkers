@@ -10,7 +10,7 @@ router.get('/:username/game',
     gameRoutes.getGames
 );
 
-router.post('/:username/game/:gameid/join',
+router.post('/:username/game/:gameId/join',
     gameRoutes.joinGame
 );
 

@@ -41,7 +41,6 @@ schema.statics.findById = function (gameId){
         _id: gameId
     })
     .limit(1)
-    .lean()
     .then(gameDB => {
         if (!gameDB[0]) {
             throw new errors.NotFoundError('Wrong gameId');
@@ -86,7 +85,7 @@ schema.statics.createGameForUser = function (userId, color, title) {
 
 schema.statics.getGamesForUser = function (userId) {
     return this.model('game').find({
-        userList: { $elemMatch: userId }
+        userList: userId
     }).lean();
 };
 

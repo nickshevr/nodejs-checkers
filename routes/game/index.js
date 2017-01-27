@@ -5,9 +5,10 @@ const Game = require('../../models/game').Game;
 const Piece = require('../../models/piece').Piece;
 const Token = require('../../models/token').Token;
 const errors = require('../../errors');
+const Promise = require('bluebird');
 
 exports.getGames = function (req, res, next) {
-    Game.getGamesForUser(req.user)
+    Game.getGamesForUser(req.user._id)
     .then(gamesArray => {
         res.json(gamesArray);
     })
@@ -37,11 +38,10 @@ exports.joinGame = function (req, res, next) {
 
     Token.find({
         value: token,
-        type: Token.statics.INVITE_TYPE,
+        type: Token.INVITE_TYPE,
         gameId
     })
     .limit(1)
-    .lean()
     .then(approved => {
         if (!approved[0]) {
             return next(new errors.NotAcceptable('Wrong Token'));
@@ -55,7 +55,7 @@ exports.joinGame = function (req, res, next) {
         return gameToUpdate[0].save();
     })
     .then(() => {
-        res.JSON(`Added to ${gameId}`)
+        res.json(`Added to ${gameId}`)
     })
     .catch(next);
 };
