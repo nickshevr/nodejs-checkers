@@ -8,7 +8,8 @@ const nonAuthRoutes = [
 
 module.exports = function(req, res, next) {
     const url = req.url.split('\?')[0];
-    const uri = url.split('/')[2];
+    const uri = url.split('/')[1];
+
     if(req.user) {
         return next();
     }

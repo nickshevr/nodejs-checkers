@@ -1,3 +1,4 @@
+'use strict';
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
@@ -17,7 +18,7 @@ const app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json(config.get('bodyParser.json')));
-app.use(bodyParser.urlencoded(config.get('bodyParser.urlencoded')));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({
   secret: config.get('session').secret,
   cookie: config.get('session').cookie,
@@ -29,9 +30,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(isAuth);
+app.use('/api', isAuth);
 app.use('/api', userRouter);
-app.use('/', gameRouter);
+app.use('/api', gameRouter);
 /**
  * Обработка ошибок: 404
  * */

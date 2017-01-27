@@ -68,6 +68,8 @@ exports.logout = function(req, res, next) {
 };
 
 exports.responseUser = function (req, res, next) {
+    console.log('***', req.user._id);
+
     User.findOne({ _id: req.user._id })
     .then(user => {
         res.json(user.toJSON());

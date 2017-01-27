@@ -1,3 +1,4 @@
+'use strict';
 const mongoose = require('mongoose');
 const Types = mongoose.Schema.Types;
 const errors = require('../errors');
@@ -8,6 +9,7 @@ const schema = new mongoose.Schema({
         default: mongoose.Types.ObjectId,
         unique: true
     },
+    title: Types.String,
     userList: [Types.ObjectId],
     playerTurn: { // 0/1 elem in userList array
         color: {
@@ -64,12 +66,13 @@ schema.statics.setOnlyEat = function (gameId) {
 };
 
 //1- user want to play black, 0 - user want to play white
-schema.statics.createGameForUser = function (userId, color) {
+schema.statics.createGameForUser = function (userId, color, title) {
     let createdGame = null;
 
     return this.model('game').create({
         userList: [userId],
-        playerTurn: color
+        playerTurn: color,
+        title
     })
     .then(createdGameDB => {
         createdGame = createdGameDB;
@@ -77,7 +80,7 @@ schema.statics.createGameForUser = function (userId, color) {
         return this.model('token').createTokenForGame(createdGameDB._id)
     })
     .then(generatedToken => {
-        return [createdGameDB, generatedToken];
+        return [createdGame, generatedToken];
     })
 };
 
@@ -87,6 +90,6 @@ schema.statics.getGamesForUser = function (userId) {
     }).lean();
 };
 
-const Game = mongoose.model('Game', schema);
+const Game = mongoose.model('game', schema);
 
 exports.Game = Game;

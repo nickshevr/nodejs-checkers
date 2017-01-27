@@ -23,11 +23,17 @@ describe('Game routes', () => {
                     password: '123456'
                 });
 
+            await agent.post('/api/login')
+                .send({
+                    login: 'Tester1',
+                    password: '123456'
+                });
+
             response = await agent.post('/api/tester1/game');
         });
 
-        it('', async () => {
-            console.log(response);
+        it('Should return inviteTokenValue', async () => {
+            console.log(response.body);
         })
     })
 

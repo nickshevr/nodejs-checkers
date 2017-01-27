@@ -25,7 +25,7 @@ exports.createGame = function (req, res, next) {
         return Piece.basePieceInit(result[0]);
     })
     .then(() => {
-        res.JSON(response);
+        res.json(response);
     })
     .catch(next);
 };

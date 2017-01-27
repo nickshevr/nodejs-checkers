@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const Types = mongoose.Schema.Types;
 const errors = require('../errors');
@@ -63,7 +65,7 @@ schema.statics.basePieceInit = function basePieceInit(gameId) {
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 7; j++) {
             if ((i + j) % 2 == 1) {
-                promises.push(this.constructor.create({
+                promises.push(this.model('piece').create({
                     gameId,
                     position: {
                         x: j,
@@ -79,7 +81,7 @@ schema.statics.basePieceInit = function basePieceInit(gameId) {
     for (let i = 7; i > 4; i--) {
         for (let j = 0; j < 7; j++) {
             if ((i + j) % 2 == 1) {
-                promises.push(this.constructor.create({
+                promises.push(this.model('piece').create({
                     gameId,
                     position: {
                         x: j,
@@ -95,7 +97,7 @@ schema.statics.basePieceInit = function basePieceInit(gameId) {
 };
 
 schema.statics.getFieldValue = function getFieldValue(gameId, x, y) {
-    return this.constructor.find({
+    return this.model('piece').find({
         gameId,
         "position.x": x,
         "position.y": y
@@ -148,6 +150,6 @@ schema.statics.movePiece = function movePiece (gameId, pieceId, newX, newY) {
         });
 };
 
-const Piece = mongoose.model('Piece', schema);
+const Piece = mongoose.model('piece', schema);
 
 exports.Piece = Piece;

@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const Types = mongoose.Schema.Types;
 const crypto = require('crypto');
@@ -20,9 +22,9 @@ const Schema = new mongoose.Schema({
     }
 });
 
-const generateToken = function generateToken(tokenLength = 6) {
+const generateToken = function generateToken() {
     return new Promise((resolve, reject) => {
-        return crypto.randomBytes(tokenLength, (err, data) => {
+        return crypto.randomBytes(6, (err, data) => {
             if (err) {
                 reject(err);
             } else {
@@ -37,14 +39,14 @@ Schema.statics.INVITE_TYPE = 'INVITE_TOKEN';
 Schema.statics.createTokenForGame = function createTokenForGame(gameId) {
     return generateToken()
         .then(generatedToken => {
-            return this.constructor.create({
+            return this.model('token').create({
                 value: generatedToken,
-                type: this.constructor.INVITE_TYPE,
+                type: this.model('token').INVITE_TYPE,
                 gameId: gameId
             })
         });
 };
 
-const Token = mongoose.model('Token', Schema);
+const Token = mongoose.model('token', Schema);
 
 exports.Game = Token;
