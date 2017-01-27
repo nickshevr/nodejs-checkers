@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Types = mongoose.Types;
+const Types = mongoose.Schema.Types;
 const errors = require('../errors');
 
 const schema = new mongoose.Schema({
@@ -121,16 +121,17 @@ schema.statics.movePiece = function movePiece (gameId, pieceId, newX, newY) {
                 throw new errors.ValidationError('Position is not empty');
             }
 
-            return this.model('piece').findById(pieceId);
+            return Promise.all([this.model('piece').findById(pieceId), this.model('game').findById(gameId)]);
         })
         .then(pieceData => {
-            pieceDB = pieceData;
+            pieceDB = pieceData[0];
+            gameDB = pieceData[1];
 
             if (pieceDB.isEaten){
                 throw new errors.ValidationError('Piece has been eaten');
             }
 
-            return this.model('piece').getFieldValue(gameId, Math.abs(newX - pieceDB.position.x)/2,  Math.abs(newY - pieceDB.position.y)/2, newY);
+            return this.model('piece').getFieldValue(gameId, Math.abs(newX - pieceDB.position.x)/2,  Math.abs(newY - pieceDB.position.y)/2);
         })
         .then(secondLinePiece => {
             if (firstValidateMove(pieceDB.color, pieceDB.position.x, pieceDB.position.y, newX, newY)) {

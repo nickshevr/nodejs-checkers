@@ -12,6 +12,7 @@ const sessionStore = new MongoStore({ mongooseConnection: connect, stringify: fa
 const isAuth = require('./middleware/isAuth.js');
 
 const userRouter = require('./routes/userRoutes');
+const gameRouter = require('./routes/gameRoutes');
 const app = express();
 
 app.use(logger('dev'));
@@ -30,7 +31,7 @@ app.use(passport.session());
 
 app.use(isAuth);
 app.use('/api', userRouter);
-
+app.use('/', gameRouter);
 /**
  * Обработка ошибок: 404
  * */

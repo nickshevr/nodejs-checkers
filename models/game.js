@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Types = mongoose.Types;
+const Types = mongoose.Schema.Types;
 const errors = require('../errors');
 
 const schema = new mongoose.Schema({
@@ -52,14 +52,14 @@ schema.statics.findById = function (gameId){
 schema.statics.changeTurn = function changeTurnStatics(gameId) {
     return this.model('game').findById(gameId)
     .then(gameDB => {
-        return gameDB.changeTurnMethod();
+        return gameDB.changeTurn();
     });
 };
 
 schema.statics.setOnlyEat = function (gameId) {
     return this.model('game').findById(gameId)
     .then(gameDB => {
-        return gameDB.setOnlyEatMethod();
+        return gameDB.changeTurn();
     });
 };
 

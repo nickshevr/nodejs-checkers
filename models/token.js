@@ -45,6 +45,6 @@ Schema.statics.createTokenForGame = function createTokenForGame(gameId) {
         });
 };
 
-const Token = mongoose.model('Token', schema);
+const Token = mongoose.model('Token', Schema);
 
 exports.Game = Token;
